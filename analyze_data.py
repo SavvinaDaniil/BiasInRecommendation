@@ -20,6 +20,9 @@ def users_and_items(df_events, user_col, item_col):
     print('No. items: ' + str(len(df_events[item_col].unique())))
     print('No. users: ' + str(len(df_events[user_col].unique())))
     print("\n")
+    
+    
+    
 def user_distribution(df_events, user_col, item_col, prnt = False):
     user_dist = df_events[user_col].value_counts() 
     num_users = len(user_dist)
@@ -29,6 +32,31 @@ def user_distribution(df_events, user_col, item_col, prnt = False):
         print('Max '+item_col+'s per user: ' + str(np.round(user_dist.max(),1)))
         print("\n")
     return user_dist, num_users
+
+
+def user_gender_distribution(df, user_col, odds_col,  prnt = False):
+    
+    user_dict = {}
+    for user in df[user_col].unique():
+        user_df = df[df[user_col] == user]
+        num_female = len(user_df[user_df.gender=="female"])
+        num_male = len(user_df[user_df.gender=="male"])
+        num_other = len(user_df[user_df.gender=="other"])
+        num_unknown = len(user_df[user_df.gender=="unknown"])
+        user_dict[user] = [num_female, num_male, num_other, num_unknown]
+    user_gender_dist = pd.DataFrame.from_dict(user_dict, orient="index",columns=["num_female", "num_male", "num_other", "num_unknown"])
+    user_gender_dist["num_total"] = user_gender_dist["num_female"] + user_gender_dist["num_male"] + user_gender_dist["num_other"] + user_gender_dist["num_unknown"]
+    user_gender_dist["ratio_female"] = user_gender_dist["num_female"]/user_gender_dist["num_total"] 
+    user_gender_dist["male_female_difference"] = (user_gender_dist["num_male"] - user_gender_dist["num_female"])/user_gender_dist["num_total"] 
+    num_users = len(user_gender_dist)
+    if prnt:
+        print('Mean '+odds_col+'s per user: ' + str(np.round(user_gender_dist[odds_col].mean(),5)))
+        print('Standard deviation of '+odds_col+'s per user: ' + str(np.round(user_gender_dist[odds_col].std(),5)))
+        print('Min '+odds_col+'s per user: ' + str(np.round(user_gender_dist[odds_col].min(),5))) 
+        print('Max '+odds_col+'s per user: ' + str(np.round(user_gender_dist[odds_col].max(),5)))
+    
+    return user_gender_dist.sort_values(by=odds_col), num_users
+
 def item_distribution(df_events, user_col, item_col, prnt = False):
     item_dist = df_events[item_col].value_counts()
     num_items = len(item_dist)
