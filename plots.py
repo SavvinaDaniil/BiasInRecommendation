@@ -134,7 +134,10 @@ def plot_profile_size_vs_popularity(pop_metric, user_hist, way, item_col, save =
     if save:
         plt.savefig(data_analysis_graphs_location+item_col+"_"+way+"_vs_size"+addition+".png", bbox_inches='tight')
     plt.show(block=True)
-def plot_group_characteristics(low_nr, med_nr, high_nr, way, item_col, save = False, addition = ""):
+    
+    
+    
+def plot_group_characteristics(low_nr, med_nr, high_nr, analysis_type = "popularity", way="size", item_col="book", save = False, addition = ""):
     plt.figure()
     ax = plt.axes()
     ax.spines['bottom'].set_color('w')
@@ -147,7 +150,16 @@ def plot_group_characteristics(low_nr, med_nr, high_nr, way, item_col, save = Fa
     
     ax.set_facecolor("aliceblue")
     plt.bar(np.arange(3), [low_nr, med_nr, high_nr])
-    plt.xticks(np.arange(3), ['LowMS', 'MedMS', 'HighMS'])
+    if analysis_type == "popularity":
+        plt.xticks(np.arange(3), ['LowMS', 'MedMS', 'HighMS'])
+        print('Low: ' + str(low_nr))
+        print('Med: ' + str(med_nr))
+        print('High: ' + str(high_nr))
+    else:
+        plt.xticks(np.arange(3), ['Female Oriented', 'Diverse', 'Male Oriented'])
+        print('Female Oriented: ' + str(np.round(low_nr,2)))
+        print('Diverse: ' + str(np.round(med_nr,2)))
+        print('Male Oriented: ' + str(np.round(high_nr,2)))
     plt.xlabel('User group')
     if way=="size":
         ylabel = 'Average user profile size'
@@ -155,12 +167,13 @@ def plot_group_characteristics(low_nr, med_nr, high_nr, way, item_col, save = Fa
         ylabel = "Number of users per group"
     plt.ylabel(ylabel)
     
-    print('LowMS: ' + str(low_nr))
-    print('MedMS: ' + str(med_nr))
-    print('HighMS: ' + str(high_nr))
+    
     if save:
         plt.savefig(data_analysis_graphs_location+item_col+"_"+way+"_groups"+addition+".png", bbox_inches='tight')
     plt.show(block=True)
+    
+    
+    
 def plot_algorithm_results(algo_names, df_item_dist, item_col, save = False, addition = ""):
     for i in range(0, len(algo_names)):
         plt.figure()
@@ -241,4 +254,73 @@ def plot_GAP_algorithm_results(low_gap_vals, medium_gap_vals, high_gap_vals, ite
     #plt.savefig('data/ECIR/gap_analysis.png', dpi=300, bbox_inches='tight')
     if save:
         plt.savefig(results_analysis_graphs_location+item_col+"_group_results"+addition+".png",  bbox_inches='tight')
+    plt.show(block=True)
+    
+    
+    
+def plot_gender_difference_distribution(male_female_differences, dividing = [False,0], save = False, addition = ""):
+    plt.figure()
+    ax = plt.axes()
+    ax.spines['bottom'].set_color('w')
+    ax.spines['top'].set_color('w')
+    ax.spines['right'].set_color('w')
+    ax.spines['left'].set_color('w')
+    ax.spines['left'].set_zorder(0)
+    ax.xaxis.set_ticks_position('none') 
+    ax.yaxis.set_ticks_position('none') 
+    
+    ax.set_facecolor("aliceblue")
+    plt.grid(color = "w",linewidth = 2 )
+    
+    if dividing[0]:
+        y = range(len(male_female_differences))
+        x0 = int(len(y)*dividing[1]) 
+        x1 = int(len(y)*(1-dividing[1]))
+        x= sorted(male_female_differences)
+        plt.plot(y[:x0+1],x[:x0+1], label="Female Oriented users", linewidth = 5)
+        plt.plot(y[x0:x1+1],x[x0:x1+1], label = "Diverse users", linewidth = 5)
+        plt.plot(y[x1:],x[x1:], label = "Male Oriented users", linewidth =5)
+    else:
+        plt.plot(male_female_differences)
+        
+    plt.xlabel('User', fontsize='15')
+    plt.xticks(fontsize='13')
+    plt.ylabel('Male - female difference', fontsize='15')
+    plt.yticks(fontsize='13')
+    #plt.axhline(y=0.8, color='black', linestyle='--', label='80% ratio of popular '+item_col+'s')
+    #plt.legend(fontsize='15')
+    #plt.savefig('data/ECIR/user_artist_ratio.png', dpi=300, bbox_inches='tight')
+    if save:
+        if dividing[0]:
+            plt.savefig(data_analysis_graphs_location+"_gen_diff_div"+addition+".png", bbox_inches='tight')
+        else:
+            plt.savefig(data_analysis_graphs_location+"_gen_diff"+addition+".png", bbox_inches='tight')
+    plt.show(block=True)
+
+def plot_profile_size_vs_gender_difference(gender_difference, user_hist, save = False, addition = ""):
+    plt.figure()
+    ax = plt.axes()
+    ax.spines['bottom'].set_color('w')
+    ax.spines['top'].set_color('w')
+    ax.spines['right'].set_color('w')
+    ax.spines['left'].set_color('w')
+    ax.spines['left'].set_zorder(0)
+    ax.xaxis.set_ticks_position('none') 
+    ax.yaxis.set_ticks_position('none') 
+    
+    ax.set_facecolor("aliceblue")
+    plt.grid(color = "w",linewidth = 2 )
+    slope, intercept, r_value, p_value, std_err = stats.linregress(user_hist, gender_difference)
+    
+    print('R-value: ' + str(r_value))
+    line = slope * np.array(user_hist) + intercept
+    plt.plot(user_hist, gender_difference, 'o', user_hist, line)
+    plt.xlabel('User profile size', fontsize='15')
+    plt.xticks(fontsize='13')
+    ylabel = "Difference between male and female in profile"
+    plt.ylabel(ylabel, fontsize='15')
+    plt.yticks(fontsize='13')
+    #plt.savefig('data/ECIR/corr_user_pop.png', dpi=300, bbox_inches='tight')
+    if save:
+        plt.savefig(data_analysis_graphs_location+"_gen_diff_vs_size"+addition+".png", bbox_inches='tight')
     plt.show(block=True)

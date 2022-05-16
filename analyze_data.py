@@ -184,20 +184,23 @@ def calculate_popularity_for_music(df_events, top_item_dist, item_dist, num_user
     output.close()
     return pop_count,user_hist,pop_fraq, pop_item_fraq, low_profile_size, medium_profile_size, high_profile_size, low_gap, medium_gap, high_gap, low_ratio, medium_ratio, high_ratio
 
-def calculate_group_characteristics(low, med, high):
-    low_profile_size = low.user_hist.mean()
-    med_profile_size = med.user_hist.mean()
-    high_profile_size = high.user_hist.mean()
+def calculate_group_characteristics(low, med, high, count_column = "user_hist", way = "popularity"):
+    low_profile_size = low[count_column].mean()
+    med_profile_size = med[count_column].mean()
+    high_profile_size = high[count_column].mean()
     
     low_nr_users = len(low)
     med_nr_users = len(med)
     high_nr_users = len(high)
     
-    low_GAP = low.pop_item_fraq.mean()
-    med_GAP = med.pop_item_fraq.mean()
-    high_GAP = high.pop_item_fraq.mean()
+    if way == "popularity":
+        low_GAP = low.pop_item_fraq.mean()
+        med_GAP = med.pop_item_fraq.mean()
+        high_GAP = high.pop_item_fraq.mean()
     
-    return low_profile_size, med_profile_size, high_profile_size, low_nr_users, med_nr_users, high_nr_users, low_GAP, med_GAP, high_GAP
+        return low_profile_size, med_profile_size, high_profile_size, low_nr_users, med_nr_users, high_nr_users, low_GAP, med_GAP, high_GAP
+    else:
+        return low_profile_size, med_profile_size, high_profile_size, low_nr_users, med_nr_users, high_nr_users
 
 def calculate_gini_coefficient(item_dist):
     total_uses = sum(item_dist.values)
