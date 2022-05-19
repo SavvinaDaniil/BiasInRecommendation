@@ -57,6 +57,26 @@ def user_gender_distribution(df, user_col, odds_col,  prnt = False):
     
     return user_gender_dist.sort_values(by=odds_col), num_users
 
+def user_country_distribution(df, user_col, odds_col,  prnt = False):
+    
+    user_dict = {}
+    for user in df[user_col].unique():
+        user_df = df[df[user_col] == user]
+        num_USA = len(user_df[user_df.country=="USA"])
+        num_rest = len(user_df[user_df.country!="USA"])
+        user_dict[user] = [num_USA, num_rest]
+    user_country_dist = pd.DataFrame.from_dict(user_dict, orient="index",columns=["num_USA", "num_rest"])
+    user_country_dist["num_total"] = user_country_dist["num_USA"] + user_country_dist["num_rest"] 
+    user_country_dist["ratio_USA"] = user_country_dist["num_USA"]/user_country_dist["num_total"] 
+    num_users = len(user_country_dist)
+    if prnt:
+        print('Mean '+odds_col+'s per user: ' + str(np.round(user_country_dist[odds_col].mean(),5)))
+        print('Standard deviation of '+odds_col+'s per user: ' + str(np.round(user_country_dist[odds_col].std(),5)))
+        print('Min '+odds_col+'s per user: ' + str(np.round(user_country_dist[odds_col].min(),5))) 
+        print('Max '+odds_col+'s per user: ' + str(np.round(user_country_dist[odds_col].max(),5)))
+    
+    return user_country_dist.sort_values(by=odds_col), num_users
+
 def item_distribution(df_events, user_col, item_col, prnt = False):
     item_dist = df_events[item_col].value_counts()
     num_items = len(item_dist)

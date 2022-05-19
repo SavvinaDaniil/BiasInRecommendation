@@ -324,3 +324,72 @@ def plot_profile_size_vs_gender_difference(gender_difference, user_hist, save = 
     if save:
         plt.savefig(data_analysis_graphs_location+"_gen_diff_vs_size"+addition+".png", bbox_inches='tight')
     plt.show(block=True)
+    
+    
+def plot_country_distribution(USA_ratios, dividing = [False,0], save = False, addition = ""):
+    plt.figure()
+    ax = plt.axes()
+    ax.spines['bottom'].set_color('w')
+    ax.spines['top'].set_color('w')
+    ax.spines['right'].set_color('w')
+    ax.spines['left'].set_color('w')
+    ax.spines['left'].set_zorder(0)
+    ax.xaxis.set_ticks_position('none') 
+    ax.yaxis.set_ticks_position('none') 
+    
+    ax.set_facecolor("aliceblue")
+    plt.grid(color = "w",linewidth = 2 )
+    
+    if dividing[0]:
+        y = range(len(USA_ratios))
+        x0 = int(len(y)*dividing[1]) 
+        x1 = int(len(y)*(1-dividing[1]))
+        x= sorted(USA_ratios)
+        plt.plot(y[:x0+1],x[:x0+1], label="USA oriented users", linewidth = 5)
+        plt.plot(y[x0:x1+1],x[x0:x1+1], label = "Diverse users", linewidth = 5)
+        plt.plot(y[x1:],x[x1:], label = "USA oriented users", linewidth =5)
+    else:
+        plt.plot(USA_ratios)
+        
+    plt.xlabel('User', fontsize='15')
+    plt.xticks(fontsize='13')
+    plt.ylabel('USA ratio', fontsize='15')
+    plt.yticks(fontsize='13')
+    #plt.axhline(y=0.8, color='black', linestyle='--', label='80% ratio of popular '+item_col+'s')
+    #plt.legend(fontsize='15')
+    #plt.savefig('data/ECIR/user_artist_ratio.png', dpi=300, bbox_inches='tight')
+    if save:
+        if dividing[0]:
+            plt.savefig(data_analysis_graphs_location+"_gen_diff_div"+addition+".png", bbox_inches='tight')
+        else:
+            plt.savefig(data_analysis_graphs_location+"_gen_diff"+addition+".png", bbox_inches='tight')
+    plt.show(block=True)
+    
+    
+def plot_profile_size_vs_USA_ratio(USA_ratio, user_hist, save = False, addition = ""):
+    plt.figure()
+    ax = plt.axes()
+    ax.spines['bottom'].set_color('w')
+    ax.spines['top'].set_color('w')
+    ax.spines['right'].set_color('w')
+    ax.spines['left'].set_color('w')
+    ax.spines['left'].set_zorder(0)
+    ax.xaxis.set_ticks_position('none') 
+    ax.yaxis.set_ticks_position('none') 
+    
+    ax.set_facecolor("aliceblue")
+    plt.grid(color = "w",linewidth = 2 )
+    slope, intercept, r_value, p_value, std_err = stats.linregress(user_hist, USA_ratio)
+    
+    print('R-value: ' + str(r_value))
+    line = slope * np.array(user_hist) + intercept
+    plt.plot(user_hist, USA_ratio, 'o', user_hist, line)
+    plt.xlabel('User profile size', fontsize='15')
+    plt.xticks(fontsize='13')
+    ylabel = "Ratio of USA authors"
+    plt.ylabel(ylabel, fontsize='15')
+    plt.yticks(fontsize='13')
+    #plt.savefig('data/ECIR/corr_user_pop.png', dpi=300, bbox_inches='tight')
+    if save:
+        plt.savefig(data_analysis_graphs_location+"_gen_diff_vs_size"+addition+".png", bbox_inches='tight')
+    plt.show(block=True)
