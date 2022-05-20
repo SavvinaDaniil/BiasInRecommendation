@@ -152,19 +152,29 @@ def plot_group_characteristics(low_nr, med_nr, high_nr, analysis_type = "popular
     plt.bar(np.arange(3), [low_nr, med_nr, high_nr])
     if analysis_type == "popularity":
         plt.xticks(np.arange(3), ['LowMS', 'MedMS', 'HighMS'])
-        print('Low: ' + str(low_nr))
-        print('Med: ' + str(med_nr))
-        print('High: ' + str(high_nr))
-    else:
+        print('LowMS: ' + str(low_nr))
+        print('MedMS: ' + str(med_nr))
+        print('HighMS: ' + str(high_nr))
+    elif analysis_type == "gender":
         plt.xticks(np.arange(3), ['Female Oriented', 'Diverse', 'Male Oriented'])
         print('Female Oriented: ' + str(np.round(low_nr,2)))
         print('Diverse: ' + str(np.round(med_nr,2)))
         print('Male Oriented: ' + str(np.round(high_nr,2)))
+    elif analysis_type == "country":
+        plt.xticks(np.arange(3), ['low USA Oriented', 'mid USA Oriented', 'USA Oriented'])
+        print('low USA Oriented: ' + str(np.round(low_nr,2)))
+        print('mid USA Oriented: ' + str(np.round(med_nr,2)))
+        print('USA Oriented: ' + str(np.round(high_nr,2)))
     plt.xlabel('User group')
     if way=="size":
         ylabel = 'Average user profile size'
-    else:
+    elif way == "number of users":
         ylabel = "Number of users per group"
+    elif way == "specific metric":
+        if analysis_type == "gender":
+            ylabel = "Average male-female difference"
+        elif analysis_type == "country":
+            ylabel = "Average USA ratio"
     plt.ylabel(ylabel)
     
     
