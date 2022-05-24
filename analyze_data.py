@@ -77,6 +77,26 @@ def user_country_distribution(df, user_col, odds_col,  prnt = False):
     
     return user_country_dist.sort_values(by=odds_col), num_users
 
+def user_birthyear_distribution(df, user_col, odds_col,  prnt = False):
+    
+    user_dict = {}
+    for user in df[user_col].unique():
+        user_df = df[df[user_col] == user]
+        num_1950 = len(user_df[user_df.birthyear=="1900-1950"])
+        num_rest = len(user_df[user_df.birthyear!="1900-1950"])
+        user_dict[user] = [num_1950, num_rest]
+    user_birthyear_dist = pd.DataFrame.from_dict(user_dict, orient="index",columns=["num_1950", "num_rest"])
+    user_birthyear_dist["num_total"] = user_birthyear_dist["num_1950"] + user_birthyear_dist["num_rest"] 
+    user_birthyear_dist["ratio_1950"] = user_birthyear_dist["num_1950"]/user_birthyear_dist["num_total"] 
+    num_users = len(user_birthyear_dist)
+    if prnt:
+        print('Mean '+odds_col+'s per user: ' + str(np.round(user_birthyear_dist[odds_col].mean(),5)))
+        print('Standard deviation of '+odds_col+'s per user: ' + str(np.round(user_birthyear_dist[odds_col].std(),5)))
+        print('Min '+odds_col+'s per user: ' + str(np.round(user_birthyear_dist[odds_col].min(),5))) 
+        print('Max '+odds_col+'s per user: ' + str(np.round(user_birthyear_dist[odds_col].max(),5)))
+    
+    return user_birthyear_dist.sort_values(by=odds_col), num_users
+
 def item_distribution(df_events, user_col, item_col, prnt = False):
     item_dist = df_events[item_col].value_counts()
     num_items = len(item_dist)
