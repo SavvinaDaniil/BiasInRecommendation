@@ -32,18 +32,6 @@ def split(user_dist_sorted, top_fraction):
     low, med, high = np.split(user_dist_sorted, [int(top_fraction*len(user_dist_sorted)), int((1-top_fraction)*len(user_dist_sorted))])
     return low, med, high
     
-def split_differently(user_dist_sorted, low_pop_fraq, med_pop_fraq, high_pop_fraq):
-    us1 = user_dist_sorted.pop_fraq.expanding().mean()
-    user_dist_sorted["us1"] = us1
-    low = user_dist_sorted[user_dist_sorted.us1<=low_pop_fraq]
-    new_usd = pd.concat([user_dist_sorted, low]).drop_duplicates(keep=False).drop("us1", axis = 1)
-    low = low.drop("us1", axis=1)
-    us1 = new_usd.pop_fraq.expanding().mean()
-    new_usd["us1"] = us1
-    med = new_usd[new_usd.us1<=med_pop_fraq]
-    high = pd.concat([new_usd, med]).drop_duplicates(keep=False).drop("us1", axis = 1)
-    med = med.drop("us1", axis=1)
-    return low, med, high
 
 def read(low_user_file, medium_user_file, high_user_file):
     low_users = pd.read_csv(low_user_file, sep=',').set_index('user_id')
