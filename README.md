@@ -11,3 +11,6 @@ Our overall goal is to evaluate hidden bias towards author characteristics that 
 3. Book results analysis
 
 Certain code segments taken from <a href = "https://github.com/rahmanidashti/FairBook"> Fairbook </a>.
+
+
+*This research was carried out with funding from the KB National Library of the Netherlands.*
